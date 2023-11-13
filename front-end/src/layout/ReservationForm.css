@@ -1,0 +1,9 @@
+input {
+    width: 100%;
+}
+
+@media all and (min-width: 400px) {
+input {
+    width: auto;
+}
+}
