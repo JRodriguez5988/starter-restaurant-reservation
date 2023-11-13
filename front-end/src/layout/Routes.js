@@ -14,9 +14,6 @@ import CreateReservation from "./CreateReservation";
  * @returns {JSX.Element}
  */
 function Routes() {
-  const queryParameters = new URLSearchParams(window.location.search);
-  const date = queryParameters.get("date");
-
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -29,7 +26,7 @@ function Routes() {
         <CreateReservation />
       </Route>
       <Route path="/dashboard">
-        <Dashboard initialDate={date || today()} />
+        <Dashboard today={today()} />
       </Route>
       <Route>
         <NotFound />
