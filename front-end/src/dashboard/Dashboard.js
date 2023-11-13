@@ -10,8 +10,12 @@ import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ initialDate }) {
-  const [date, setDate] = useState(initialDate)
+function Dashboard({ today }) {
+  const queryParameters = new URLSearchParams(window.location.search);
+  const queryDate = queryParameters.get("date");
+
+  const [date, setDate] = useState(queryDate || today);
+
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
