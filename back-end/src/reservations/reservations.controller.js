@@ -38,24 +38,73 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 };
 
+function isValidDate(req, res, next) {
+  const date = req.body.data.reservation_date;
+  if (isNaN(new Date(date))) {
+    next({
+      status: 400,
+      message: `reservation_date is invalid: ${date}`
+    });
+  };
+  next();
+};
+
+function isValidTime(req, res, next) {
+  const time = req.body.data.reservation_time;
+  const isValid = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)
+  if (!isValid) {
+    next({
+      status: 400,
+      message: `reservation_time is invalid: ${time}`
+    });
+  };
+  next();
+};
+
+function peopleIsNumber(req, res, next) {
+  const people = req.body.data.people;
+  if (typeof people !== "number") {
+    next({
+      status: 400,
+      message: `people value is not a number: ${people}`
+    });
+  };
+  next();
+};
 
 async function list(req, res) {
+  let data;
   if (req.query.date) {
-    res.json({ data: await reservationsService.listByDate(req.query.date) });
+    data = await reservationsService.listByDate(req.query.date);
   } else {
-    res.json({ data: await reservationsService.list() });
+    data = await reservationsService.list();
   };
+  const sortedData = data.sort((a, b) => {
+    const timeA = a.reservation_time;
+    const timeB = b.reservation_time;
+    if (timeA > timeB) {
+      return 1;
+    } else if (timeA < timeB) {
+      return -1;
+    } else {
+      return 0;
+    };
+  });
+  res.json({ data: sortedData });
 };
 
 async function create(req, res) {
-  res.status(201).json({ data: await reservationsService.create(req.body) });
+  res.status(201).json({ data: await reservationsService.create(req.body.data) });
 };
 
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
     hasOnlyValidProperties, 
-    hasRequiredProperties, 
+    hasRequiredProperties,
+    isValidDate,
+    isValidTime,
+    peopleIsNumber,
     asyncErrorBoundary(create),
   ]
 };
