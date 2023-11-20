@@ -3,6 +3,7 @@ import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservation from "./DashboardReservation";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { today, previous, next } from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -10,11 +11,11 @@ import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ today }) {
+function Dashboard() {
   const queryParameters = new URLSearchParams(window.location.search);
-  const queryDate = queryParameters.get("date");
+  const queryDate = queryParameters.get("date") || today();
 
-  const [date, setDate] = useState(queryDate || today);
+  const [date, setDate] = useState(queryDate);
 
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
@@ -34,14 +35,13 @@ function Dashboard({ today }) {
   const cycleDate = (event) => {
     event.preventDefault();
     let text = event.target.innerText;
-    let newDate = new Date(date);
+    let newDate;
     if (text === "<") {
-      newDate.setDate(newDate.getDate() - 1);
+      newDate = previous(date)
     }
     if (text === ">") {
-      newDate.setDate(newDate.getDate() + 1);
+      newDate = next(date);
     }
-    newDate = newDate.toISOString().split("T")[0];
     setDate(newDate)
     history.push(`/dashboard?date=${newDate}`);
   };

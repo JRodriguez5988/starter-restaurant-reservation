@@ -4,7 +4,7 @@ import { createReservation } from "../utils/api";
 
 function ReservationForm({formData, setFormData, reservations, history}) {
     const handleChange = ({target}) => {
-        const value = target.value;
+        let value = target.value;
         const newFormData = {...formData, [target.name]: value};
         setFormData(newFormData);
     };
