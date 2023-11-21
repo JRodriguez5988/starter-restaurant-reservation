@@ -16,6 +16,9 @@ function Dashboard() {
   const queryDate = queryParameters.get("date") || today();
 
   const [date, setDate] = useState(queryDate);
+  let [year, month, day] = queryDate.split("-");
+  month -= 1;
+  const headerDate = new Date(year, month, day).toString().slice(0, 15);
 
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
@@ -49,19 +52,20 @@ function Dashboard() {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
-      </div>
-      <ErrorAlert error={reservationsError} />
       <div className="col">
         <button onClick={cycleDate} type="button" className="btn btn-secondary">{"<"}</button>
         <Link to={"/"} type="button" className="btn btn-primary">Today</Link>
         <button onClick={cycleDate} type="button" className="btn btn-secondary">{">"}</button>
       </div>
-      <ol>
+      <br/>
+      <div className="card d-md-flex mb-3" >
+        <h4 className="card-header mb-0">Reservations for {headerDate}</h4>
+      </div>
+      <ErrorAlert error={reservationsError} />
+      <ul className="list-group list-group-flush" >
         {reservations.map((reservation, index) => 
         <DashboardReservation key={index} reservation={reservation} />)}
-      </ol>
+      </ul>
     </main>
   );
 }
