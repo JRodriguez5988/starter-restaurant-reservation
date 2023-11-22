@@ -1,18 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ReservationForm.css";
 import { createReservation } from "../utils/api";
+import ErrorAlert from "./ErrorAlert";
+import { today } from "../utils/date-time";
 
 function ReservationForm({formData, setFormData, reservations, history}) {
+    const [formError, setFormError] = useState(null)
+
+    function isValid(formData) {
+        let result = true
+        let [year, month, day] = formData.reservation_date.split("-");
+        month -= 1;
+        const date = new Date(year, month, day);
+        const currentDate = new Date(today)
+        let weekday = date.getDay();
+        if (weekday === 2) {
+            setFormError({message: "Restaurant is closed on Tuesdays."});
+            result = false;
+        }
+        if (currentDate > date) {
+            setFormError({message: "Date must be today or future date."});
+            result = false;
+        };
+        return result;
+    };
+
     const handleChange = ({target}) => {
         let value = target.value;
+        if (target.name === "people") {
+            value = Number(value);
+        };
         const newFormData = {...formData, [target.name]: value};
         setFormData(newFormData);
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await createReservation(formData);
-        history.push(`/dashboard?date=${formData.reservation_date}`);
+        if (isValid(formData)) {
+            try {
+                await createReservation(formData);
+                history.push(`/dashboard?date=${formData.reservation_date}`);
+            } catch (error) {
+                setFormError(error)
+            };
+        };
     };
 
     const goBack = (event) => {
@@ -22,6 +53,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
 
     return (
         <>
+        <ErrorAlert error={formError} />
         <div className="row">
             <div className="col">
                 <label htmlFor="first_name">First Name:</label>
@@ -92,7 +124,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         <label htmlFor="people" style={{marginRight: 5}}>Party Size:</label>
         <input
         name="people"
-        type="number"
+        type="text"
         id="people"
         onChange={handleChange}
         value={formData.people}

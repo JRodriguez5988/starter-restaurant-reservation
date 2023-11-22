@@ -49,6 +49,33 @@ function isValidDate(req, res, next) {
   next();
 };
 
+function notTuesday(req, res, next) {
+  let [year, month, day] = req.body.data.reservation_date.split("-");
+  month -= 1;
+  const date = new Date(year, month, day).getDay();
+  if (date === 2) {
+    next({
+      status: 400,
+      message: `Restaurant closed on Tuesdays.`
+    });
+  };
+  next();
+};
+
+function notPastDate(req, res, next) {
+  let [year, month, day] = req.body.data.reservation_date.split("-");
+  month -= 1;
+  const requestDate = new Date(year, month, day);
+  const today = new Date();
+  if (requestDate < today) {
+    next({
+      status: 400,
+      message: `Date must be today or a future date.`
+    });
+  };
+  next();
+};
+
 function isValidTime(req, res, next) {
   const time = req.body.data.reservation_time;
   const isValid = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)
@@ -103,6 +130,8 @@ module.exports = {
     hasOnlyValidProperties, 
     hasRequiredProperties,
     isValidDate,
+    notTuesday,
+    notPastDate,
     isValidTime,
     peopleIsNumber,
     asyncErrorBoundary(create),
