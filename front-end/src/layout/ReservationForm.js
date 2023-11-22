@@ -8,15 +8,22 @@ function ReservationForm({formData, setFormData, reservations, history}) {
 
     function isValid(formData) {
         let result = true
+
         let [year, month, day] = formData.reservation_date.split("-");
         month -= 1;
-        let time = formData.reservation_time;
+
+        const time = formData.reservation_time;
         let [hh, mm] = time.split(":");
+
         const date = new Date(year, month, day, hh, mm);
+
+        const weekday = date.getDay();
+
         const currentDate = new Date();
-        let weekday = date.getDay();
+
         const openingTime = "10:30";
         const closingTime = "21:30";
+
         if (weekday === 2) {
             setFormError({message: "Restaurant is closed on Tuesdays."});
             result = false;
