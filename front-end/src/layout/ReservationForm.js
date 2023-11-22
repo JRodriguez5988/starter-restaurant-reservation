@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./ReservationForm.css";
 import { createReservation } from "../utils/api";
 import ErrorAlert from "./ErrorAlert";
-import { today } from "../utils/date-time";
 
 function ReservationForm({formData, setFormData, reservations, history}) {
     const [formError, setFormError] = useState(null)
@@ -11,15 +10,23 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         let result = true
         let [year, month, day] = formData.reservation_date.split("-");
         month -= 1;
-        const date = new Date(year, month, day);
-        const currentDate = new Date(today)
+        let time = formData.reservation_time;
+        let [hh, mm] = time.split(":");
+        const date = new Date(year, month, day, hh, mm);
+        const currentDate = new Date();
         let weekday = date.getDay();
+        const openingTime = "10:30";
+        const closingTime = "21:30";
         if (weekday === 2) {
             setFormError({message: "Restaurant is closed on Tuesdays."});
             result = false;
-        }
+        };
         if (currentDate > date) {
-            setFormError({message: "Date must be today or future date."});
+            setFormError({message: "Date and time must be in the future."});
+            result = false;
+        };
+        if (time < openingTime || time > closingTime) {
+            setFormError({message: "Reservation time must be set during business hours."});
             result = false;
         };
         return result;

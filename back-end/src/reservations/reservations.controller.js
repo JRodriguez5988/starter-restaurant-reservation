@@ -88,6 +88,19 @@ function isValidTime(req, res, next) {
   next();
 };
 
+function duringOpenHours(req, res, next) {
+  let time = req.body.data.reservation_time;
+  const openingTime = "10:30";
+  const closingTime = "21:30";
+  if (time < openingTime || time > closingTime) {
+    next({
+      status: 400,
+      message: `Reservation time must set during business hours.`
+    });
+  };
+  next();
+};
+
 function peopleIsNumber(req, res, next) {
   const people = req.body.data.people;
   if (typeof people !== "number") {
@@ -133,7 +146,8 @@ module.exports = {
     notTuesday,
     notPastDate,
     isValidTime,
+    duringOpenHours,
     peopleIsNumber,
     asyncErrorBoundary(create),
-  ]
+  ],
 };
