@@ -10,7 +10,7 @@ function DashboardReservation({reservation}) {
                 <p>Time: {reservation.reservation_time}</p>
                 <p>Party Size: {reservation.people}</p>
             </div>
-            <Link to={`/reservations/${reservation_id}/seat`} type="button" className="btn btn-primary">Seat</Link>
+            <Link to={`/reservations/${reservation_id}/seat`} href={`/reservations/${reservation_id}/seat`} type="button" className="btn btn-primary">Seat</Link>
         </li>
     )
 }

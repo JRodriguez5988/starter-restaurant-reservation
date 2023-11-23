@@ -69,26 +69,24 @@ function Dashboard() {
 
   return (
     <main>
-      <h1>Dashboard</h1>
+      <h1>Dashboard: {headerDate}</h1>
       <div className="col">
         <button onClick={cycleDate} type="button" className="btn btn-secondary">{"<"}</button>
         <Link to={"/"} type="button" className="btn btn-primary">Today</Link>
         <button onClick={cycleDate} type="button" className="btn btn-secondary">{">"}</button>
       </div>
       <br/>
-      <div className="card d-md-flex mb-3">
-        <h4 className="card-header mb-0">Reservations for {headerDate}</h4>
-      </div>
       <ErrorAlert error={reservationsError} />
       <div className="row">
         <div className="col-7">
+          <h4 className="card-header mb-0">Reservations:</h4>
           <ul className="list-group list-group-flush">
             {reservations.map((reservation, index) => 
             <DashboardReservation key={index} reservation={reservation} />)}
           </ul>
         </div>
         <div className="col-5">
-          <h6 className="card-header">Tables:</h6>
+          <h4 className="card-header">Tables:</h4>
           <div>
             {tables.map((table, index) => 
             <DashboardTable key={index} table={table} />)}
