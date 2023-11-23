@@ -20,9 +20,7 @@ function CreateReservation() {
         <div>
             <h1>New Reservation</h1>
             <section className="border border-dark" style={{padding: 10}}>
-                <form>
-                    <ReservationForm formData={formData} setFormData={setFormData} history={history} />
-                </form>
+                <ReservationForm formData={formData} setFormData={setFormData} history={history} />
             </section>
         </div>
     );

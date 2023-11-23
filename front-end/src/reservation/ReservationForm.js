@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ReservationForm.css";
 import { createReservation } from "../utils/api";
-import ErrorAlert from "./ErrorAlert";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function ReservationForm({formData, setFormData, reservations, history}) {
     const [formError, setFormError] = useState(null)
@@ -66,7 +66,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
     };
 
     return (
-        <>
+        <form>
         <ErrorAlert error={formError} />
         <div className="row">
             <div className="col">
@@ -148,7 +148,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         <br/>
         <button onClick={goBack} type="button" className="btn btn-secondary" style={{marginRight: 10}}>Cancel</button>
         <button onClick={handleSubmit} type="submit" className="btn btn-primary">Submit</button>
-        </>
+        </form>
     );
 };
 
