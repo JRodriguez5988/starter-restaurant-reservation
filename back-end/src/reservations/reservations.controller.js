@@ -137,6 +137,17 @@ async function create(req, res) {
   res.status(201).json({ data: await reservationsService.create(req.body.data) });
 };
 
+async function read(req, res, next) {
+  const reservation_id = req.params.reservation_id;
+  if (!reservation_id) {
+    next({
+      status: 400,
+      message: "Reservation not found."
+    })
+  }
+  res.json({ data: await reservationsService.read(reservation_id)})
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -150,4 +161,5 @@ module.exports = {
     peopleIsNumber,
     asyncErrorBoundary(create),
   ],
+  read: asyncErrorBoundary(read),
 };

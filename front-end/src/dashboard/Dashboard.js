@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import DashboardReservation from "./DashboardReservation";
 import DashboardTable from "./DashboardTable";
@@ -24,7 +24,7 @@ function Dashboard() {
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  // const [tables, setTables] = useState([]);
+  const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [date]);
@@ -36,9 +36,9 @@ function Dashboard() {
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
-    // listTables(abortController.signal)
-    //   .then(setTables)
-    //   .catch(setTablesError);
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -55,17 +55,6 @@ function Dashboard() {
     setDate(newDate)
     history.push(`/dashboard?date=${newDate}`);
   };
-
-  const tables = ([
-    {
-      table_name: "Bar #1",
-      capacity: 4,
-    },
-    {
-      table_name: "Bar #2",
-      capacity: 2,
-    },
-  ])
 
   return (
     <main>
