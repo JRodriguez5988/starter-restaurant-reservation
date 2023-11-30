@@ -2,7 +2,11 @@ import React from "react";
 
 function DashboardTable({ table }) {
     function isSeated() {
-        return true;
+        let result = true
+        if (!table.reservation_id) {
+            result = false;
+        };
+        return result;
     };
 
     return (
