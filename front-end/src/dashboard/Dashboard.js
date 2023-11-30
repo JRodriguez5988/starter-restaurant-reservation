@@ -23,22 +23,21 @@ function Dashboard() {
 
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
+  const [error, setError] = useState(null);
   const [tables, setTables] = useState([]);
-  const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
     const abortController = new AbortController();
-    setReservationsError(null);
-    setTablesError(null);
+    setError(null);
+    setError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
-      .catch(setReservationsError);
+      .catch(setError);
     listTables(abortController.signal)
       .then(setTables)
-      .catch(setTablesError);
+      .catch(setError);
     return () => abortController.abort();
   }
 
@@ -65,7 +64,7 @@ function Dashboard() {
         <button onClick={cycleDate} type="button" className="btn btn-secondary">{">"}</button>
       </div>
       <br/>
-      <ErrorAlert error={reservationsError} />
+      <ErrorAlert error={error} />
       <div className="row">
         <div className="col-7">
           <h4 className="card-header mb-0">Reservations:</h4>

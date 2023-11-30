@@ -6,35 +6,33 @@ import { assignTable, readReservation, listTables } from "../utils/api";
 function SeatReservation() {
     const reservation_id = useParams().reservation_id;
     const history = useHistory();
-    const [formError, setFormError] = useState(null);
+    const [error, setError] = useState(null);
     const [tables, setTables] = useState([]);
     const [reservation, setReservation] = useState({});
-    const [reservationError, setReservationError] = useState(null);
-    const [tablesError, setTablesError] = useState(null);
+ 
 
-    useEffect(loadTablesAndReservation, []);
+    useEffect(loadTablesAndReservation, [reservation_id]);
 
     function loadTablesAndReservation() {
         const abortController = new AbortController();
-        setTablesError(null);
-        setReservationError(null);
+        setError(null);
         readReservation(reservation_id, abortController.signal)
             .then(setReservation)
-            .catch(setReservationError);
+            .catch(setError);
         listTables(abortController.signal)
             .then(setTables)
-            .catch(setTablesError);
+            .catch(setError);
         return () => abortController.abort();
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setFormError(null);
+        setError(null);
         const selected = document.querySelector("select").value;
-        const table = tables.find(table => table.table_name == selected);
+        const table = tables.find(table => table.table_name === selected);
         const abortController = new AbortController();
         if (reservation.people > table.capacity) {
-            setFormError({message: "Table does not have enough seats."});
+            setError({message: "Table does not have enough seats."});
         } else {
             await assignTable(reservation.reservation_id, table.table_id, abortController.signal)
             history.push("/dashboard");
@@ -48,7 +46,7 @@ function SeatReservation() {
 
     return (
         <div>
-            <ErrorAlert error={formError} />
+            <ErrorAlert error={error} />
             <label htmlFor="table_number" >Table Number:</label>
             <select name="table_id" >
                 <option value="">-- Select Table --</option>
