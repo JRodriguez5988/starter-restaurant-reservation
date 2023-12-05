@@ -55,7 +55,7 @@ function SeatReservation() {
             </select>
             <br/>
             <button className="btn btn-secondary" style={{marginRight: 5}} onClick={goBack}>Cancel</button>
-            <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+            <button className="btn btn-primary" onClick={handleSubmit} type="submit" >Submit</button>
         </div>
     );
 };

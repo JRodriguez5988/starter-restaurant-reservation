@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import "./TableForm.css";
+import { createTable } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function TableForm({ formData, setFormData, history }) {
+    const [error, setError] = useState(null);
     const handleChange = ({target}) => {
         let value = target.value;
         if (target.name === "capacity") {
@@ -16,13 +19,21 @@ function TableForm({ formData, setFormData, history }) {
         history.goBack();
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        history.push("/dashboard");
-    }
+        const abortController = new AbortController();
+        setError(null)
+        try {
+            await createTable(formData, abortController.signal);
+            history.push("/dashboard");
+        } catch (error) {
+            setError(error);
+        };
+    };
 
     return (
         <form>
+            <ErrorAlert error={error} />
             <div>
                 <label htmlFor="table_name" >Table Name:</label>
                 <br/>
@@ -39,7 +50,7 @@ function TableForm({ formData, setFormData, history }) {
                 <br/>
                 <input
                 name="capacity"
-                type="text"
+                type="number"
                 id="capacity"
                 onChange={handleChange}
                 value={formData.capacity}

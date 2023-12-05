@@ -27,6 +27,30 @@ function hasOnlyValidProperties(req, res, next) {
     next();
 };
 
+function nameLengthValid(req, res, next) {
+    let name = req.body.data.table_name;
+    name = name.split("");
+    if (name.length === 1) {
+        next({
+            status: 400,
+            message: "Name cannot consist of a single character."
+        });
+    };
+    next()
+};
+
+async function nameTaken(req, res, next) {
+    let tables = await tablesService.list();
+    let name = req.body.data.table_name;
+    if (tables.find(table => table.table_name === name)) {
+        next({
+            status: 400,
+            message: "Table name already exists."
+        });
+    };
+    next();
+};
+
 async function list(req, res) {
     let data = await tablesService.list();
     const sortedData = data.sort((a, b) => {
@@ -41,7 +65,11 @@ async function list(req, res) {
       };
     });
     res.json({ data: sortedData });
-}
+};
+
+async function create(req, res) {
+    res.status(201).json({ data: await tablesService.create(req.body.data) });
+};
 
 async function tableExists(req, res, next) {
     const table_id = req.params.table_id;
@@ -75,6 +103,13 @@ async function update(req, res) {
 
 module.exports = {
     list: asyncErrorBoundary(list),
+    create: [
+        hasOnlyValidProperties,
+        hasRequiredProperties,
+        nameLengthValid,
+        asyncErrorBoundary(nameTaken),
+        asyncErrorBoundary(create),
+    ],
     update: [
         asyncErrorBoundary(tableExists),
         asyncErrorBoundary(update),
