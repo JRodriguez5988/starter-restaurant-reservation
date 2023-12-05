@@ -51,6 +51,29 @@ async function nameTaken(req, res, next) {
     next();
 };
 
+async function tableExists(req, res, next) {
+    const table_id = req.params.table_id;
+    res.locals.table = await tablesService.read(table_id)
+    if (!res.locals.table) {
+        next({
+            status: 404,
+            message: `Table not found: ${table_id}`,
+        }); 
+    };
+    next();
+};
+
+function isNotOccupied(req, res, next) {
+    const table = res.locals.table;
+    if (!table.reservation_id) {
+        next({
+            status: 400,
+            message: "Table is not occupied.",
+        });
+    };
+    next();
+};
+
 async function list(req, res) {
     let data = await tablesService.list();
     const sortedData = data.sort((a, b) => {
@@ -71,18 +94,6 @@ async function create(req, res) {
     res.status(201).json({ data: await tablesService.create(req.body.data) });
 };
 
-async function tableExists(req, res, next) {
-    const table_id = req.params.table_id;
-    res.locals.table = await tablesService.read(table_id)
-    if (!res.locals.table) {
-        next({
-            status: 400,
-            message: "Table not found",
-        }); 
-    };
-    next();
-};
-
 function read(req, res) {
     const table = res.locals.table;
     res.json({ data: table });
@@ -101,6 +112,18 @@ async function update(req, res) {
     res.json({ data: await tablesService.update(updatedTable) });
 };
 
+async function deleteAssignment(req, res) {
+    const table = res.locals.table;
+    const updatedTable = {
+        table_id: table.table_id,
+        reservation_id: null,
+        table_name: table.table_name,
+        capacity: table.capacity,
+    };
+    const [ data ] = await tablesService.update(updatedTable)
+    res.json({ data: data })
+};
+
 module.exports = {
     list: asyncErrorBoundary(list),
     create: [
@@ -117,5 +140,10 @@ module.exports = {
     read: [
         asyncErrorBoundary(tableExists),
         read,
+    ],
+    destroy: [
+        tableExists,
+        isNotOccupied,
+        asyncErrorBoundary(deleteAssignment),
     ],
 };

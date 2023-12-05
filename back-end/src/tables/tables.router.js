@@ -9,6 +9,7 @@ router.route("/:table_id")
     .get(controller.read);
 
 router.route("/:table_id/seat")
-    .put(controller.update);
+    .put(controller.update)
+    .delete(controller.destroy);
 
 module.exports = router;

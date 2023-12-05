@@ -74,7 +74,7 @@ export async function getReservations(signal) {
 };
 
 export async function createReservation(reservation, signal) {
-  const url = `${API_BASE_URL}/reservations`;
+  const url = new URL(`${API_BASE_URL}/reservations`);
   const options = {
     method: "POST",
     headers,
@@ -85,7 +85,7 @@ export async function createReservation(reservation, signal) {
 };
 
 export async function createTable(table, signal) {
-  const url = `${API_BASE_URL}/tables`;
+  const url = new URL(`${API_BASE_URL}/tables`);
   const options = {
     method: "POST",
     headers,
@@ -96,7 +96,7 @@ export async function createTable(table, signal) {
 };
 
 export async function assignTable(reservationId, tableId, signal) {
-  const url = `${API_BASE_URL}/tables/${tableId}/seat/`
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat/`);
   const options = {
     method: "PUT",
     headers,
@@ -115,4 +115,13 @@ export async function listTables(signal) {
 export async function readReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
   return await fetchJson(url, { signal }, {});
+}
+
+export async function deleteAssignment(table, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table.table_id}/seat`);
+  const options = {
+    method: "DELETE",
+    signal,
+  };
+  return await fetchJson(url, options);
 }
