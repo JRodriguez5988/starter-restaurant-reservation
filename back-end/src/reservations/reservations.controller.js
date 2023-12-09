@@ -65,8 +65,11 @@ function notTuesday(req, res, next) {
 function notPastDate(req, res, next) {
   let [year, month, day] = req.body.data.reservation_date.split("-");
   month -= 1;
-  const requestDate = new Date(year, month, day);
-  const today = new Date();
+  let [hh, mm] = req.body.data.reservation_time.split(":");
+  const requestDate = new Date(year, month, day, hh, mm);
+  console.log(requestDate)
+  const today = new Date()
+  console.log(today)
   if (requestDate < today) {
     next({
       status: 400,
