@@ -63,7 +63,7 @@ async function tableExists(req, res, next) {
     next();
 };
 
-function isNotOccupied(req, res, next) {
+function isOccupied(req, res, next) {
     const table = res.locals.table;
     if (!table.reservation_id) {
         next({
@@ -141,9 +141,9 @@ module.exports = {
         asyncErrorBoundary(tableExists),
         read,
     ],
-    destroy: [
+    clear: [
         tableExists,
-        isNotOccupied,
+        isOccupied,
         asyncErrorBoundary(deleteAssignment),
     ],
 };
