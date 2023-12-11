@@ -104,7 +104,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         id="mobile_number"
         onChange={handleChange}
         value={formData.mobile_number}
-        placeholder="Mobile #"
+        placeholder="xxx-xxx-xxxx"
         />
         <br/>
         <div className="row">
@@ -118,6 +118,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
                 onChange={handleChange}
                 value={formData.reservation_date}
                 placeholder="YYYY-MM-DD"
+                pattern="\d{4}-\d{2}-\d{2}"
                 />
                 <br/>
             </div>
@@ -131,6 +132,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
                 onChange={handleChange}
                 value={formData.reservation_time}
                 placeholder="HH:MM"
+                pattern="[0-9]{2}:[0-9]{2}"
                 />
             </div>
         </div>
@@ -138,7 +140,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         <label htmlFor="people" style={{marginRight: 5}}>Party Size:</label>
         <input
         name="people"
-        type="text"
+        type="number"
         id="people"
         onChange={handleChange}
         value={formData.people}

@@ -5,6 +5,7 @@ import DashboardReservation from "./DashboardReservation";
 import DashboardTable from "./DashboardTable";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { today, previous, next } from "../utils/date-time";
+import useQuery from "../utils/useQuery";
 
 /**
  * Defines the dashboard page.
@@ -13,8 +14,8 @@ import { today, previous, next } from "../utils/date-time";
  * @returns {JSX.Element}
  */
 function Dashboard() {
-  const queryParameters = new URLSearchParams(window.location.search);
-  const queryDate = queryParameters.get("date") || today();
+  const query = useQuery()
+  const queryDate = query.get("date") || today();
 
   const [date, setDate] = useState(queryDate);
   let [year, month, day] = queryDate.split("-");
