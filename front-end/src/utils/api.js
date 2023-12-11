@@ -50,7 +50,7 @@ async function fetchJson(url, options, onCancel) {
     }
     return Promise.resolve(onCancel);
   }
-}
+};
 
 /**
  * Retrieves all existing reservation.
@@ -110,12 +110,12 @@ export async function assignTable(reservationId, tableId, signal) {
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
   return await fetchJson(url, { signal }, []);
-}
+};
 
 export async function readReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
   return await fetchJson(url, { signal }, {});
-}
+};
 
 export async function deleteAssignment(table, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${table.table_id}/seat`);
@@ -124,4 +124,4 @@ export async function deleteAssignment(table, signal) {
     signal,
   };
   return await fetchJson(url, options);
-}
+};

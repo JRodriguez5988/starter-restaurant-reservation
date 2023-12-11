@@ -8,8 +8,9 @@ function DashboardTable({ table }) {
     const handleFinish = async (event) => {
         event.preventDefault();
         if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
-          await deleteAssignment(table);
-          history.push("/");
+            const abortController = new AbortController();
+            await deleteAssignment(table, abortController.signal);
+            history.push("/");
         };
       };
 

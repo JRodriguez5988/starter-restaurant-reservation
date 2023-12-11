@@ -34,7 +34,7 @@ function SeatReservation() {
         if (reservation.people > table.capacity) {
             setError({message: "Table does not have enough seats."});
         } else {
-            await assignTable(reservation.reservation_id, table.table_id, abortController.signal)
+            await assignTable(reservation.reservation_id, table.table_id, abortController.signal);
             history.push("/dashboard");
         };
     };

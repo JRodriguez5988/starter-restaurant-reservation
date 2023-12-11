@@ -7,7 +7,7 @@ function list() {
 function listByDate(reservation_date) {
     return knex("reservations")
         .select("*")
-        .where({"reservation_date": reservation_date});
+        .where({reservation_date: reservation_date});
 };
 
 function create(reservation) {
@@ -20,8 +20,16 @@ function create(reservation) {
 function read(reservation_id) {
     return knex("reservations")
         .select("*")
-        .where({reservation_id})
+        .where({reservation_id: reservation_id})
         .first();
+};
+
+function update(updatedReservation) {
+    return knex("reservations")
+        .select("*")
+        .where({reservation_id: updatedReservation.reservation_id})
+        .update(updatedReservation, "*")
+        .then((updatedReservations) => updatedReservations[0]);
 };
 
 module.exports = {
@@ -29,4 +37,5 @@ module.exports = {
     listByDate,
     create,
     read,
+    update,
 }
