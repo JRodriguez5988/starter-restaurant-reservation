@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import "./ReservationForm.css";
 import { createReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import { formatMobileNumber } from "../utils/mobile-number";
 
-function ReservationForm({formData, setFormData, reservations, history}) {
+function ReservationForm({formData, setFormData, history}) {
     const [formError, setFormError] = useState(null)
 
     function isValid(formData) {
@@ -36,6 +37,10 @@ function ReservationForm({formData, setFormData, reservations, history}) {
             setFormError({message: "Reservation time must be set during business hours."});
             result = false;
         };
+        if (!(formData.mobile_number.match('[0-9]{10}'))) {
+            setFormError({message: "Mobile Number must be a valid phone number."});
+            result = false;
+        }
         return result;
     };
 
@@ -51,6 +56,7 @@ function ReservationForm({formData, setFormData, reservations, history}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (isValid(formData)) {
+            formData.mobile_number = formatMobileNumber(formData.mobile_number);
             try {
                 await createReservation(formData);
                 history.push(`/dashboard?date=${formData.reservation_date}`);
@@ -100,11 +106,14 @@ function ReservationForm({formData, setFormData, reservations, history}) {
         <br/>
         <input 
         name="mobile_number"
-        type="text"
+        type="tel"
         id="mobile_number"
         onChange={handleChange}
         value={formData.mobile_number}
         placeholder="xxx-xxx-xxxx"
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        maxLength={10}
+        required
         />
         <br/>
         <div className="row">
