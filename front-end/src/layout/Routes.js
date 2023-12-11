@@ -32,7 +32,7 @@ function Routes() {
       <Route exact={true} path="/tables/new">
         <CreateTable />
       </Route>
-      <Route exact={true} path="/dashboard">
+      <Route path="/dashboard">
         <Dashboard />
       </Route>
       <Route>
