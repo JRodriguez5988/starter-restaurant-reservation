@@ -71,6 +71,7 @@ function Dashboard() {
           <h4 className="card-header mb-0">Reservations:</h4>
           <ul className="list-group list-group-flush">
             {reservations.map((reservation, index) => 
+            reservation.status === "finished" ? null :
             <DashboardReservation key={index} reservation={reservation} />)}
           </ul>
         </div>

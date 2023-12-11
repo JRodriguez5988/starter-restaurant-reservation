@@ -10,7 +10,15 @@ function listByDate(reservation_date) {
         .where({reservation_date: reservation_date});
 };
 
-function create(reservation) {
+function search(mobile_number) {
+    return knex("reservations")
+        .whereRaw(
+            "translate(mobile_number, '() -', '') like ?", 
+            `%${mobile_number.replace(/\D/g, "")}%`)
+        .orderBy("reservation_date");
+};
+
+async function create(reservation) {
     return knex("reservations")
         .insert(reservation)
         .returning("*")
@@ -35,6 +43,7 @@ function update(updatedReservation) {
 module.exports = {
     list,
     listByDate,
+    search,
     create,
     read,
     update,

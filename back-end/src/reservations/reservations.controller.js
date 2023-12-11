@@ -171,10 +171,12 @@ async function list(req, res) {
   let data;
   if (req.query.date) {
     data = await reservationsService.listByDate(req.query.date);
+    data = data.filter(reservation => reservation.status !== "finished");
+  } else if (req.query.mobile_number) {
+    data = await reservationsService.search(req.query.mobile_number);
   } else {
     data = await reservationsService.list();
   };
-  data = data.filter(reservation => reservation.status !== "finished");
   const sortedData = data.sort((a, b) => {
     const timeA = a.reservation_time;
     const timeB = b.reservation_time;

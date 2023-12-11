@@ -8,7 +8,6 @@ function DashboardReservation({reservation}) {
     
     return (
         <>
-        {reservation.status === "finished" ? null : 
         <li className="list-group-item">
             <h6 className="card-header">Name: {reservation.first_name} {reservation.last_name}</h6>
             <div className="card-body">
@@ -20,7 +19,7 @@ function DashboardReservation({reservation}) {
             {reservation.status === "booked" ? 
             <Link to={`/reservations/${reservation_id}/seat`} href={`/reservations/${reservation_id}/seat`} type="button" className="btn btn-primary">Seat</Link>
             : null}
-        </li>}
+        </li>
         </>
     )
 }
