@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./ReservationForm.css";
-import { createReservation } from "../utils/api";
+import { createReservation, updateReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { formatMobileNumber } from "../utils/mobile-number";
 
-function ReservationForm({formData, setFormData, history}) {
+function ReservationForm({formData, setFormData, history, addReservation = true}) {
     const [formError, setFormError] = useState(null)
 
     function isValid(formData) {
@@ -37,7 +37,8 @@ function ReservationForm({formData, setFormData, history}) {
             setFormError({message: "Reservation time must be set during business hours."});
             result = false;
         };
-        if (!(formData.mobile_number.match('[0-9]{10}'))) {
+        const number = formData.mobile_number.replace(/\D+/g, '');
+        if (!(number.match('[0-9]{10}'))) {
             setFormError({message: "Mobile Number must be a valid phone number."});
             result = false;
         }
@@ -57,12 +58,20 @@ function ReservationForm({formData, setFormData, history}) {
         event.preventDefault();
         if (isValid(formData)) {
             formData.mobile_number = formatMobileNumber(formData.mobile_number);
+            setFormError(null);
+            const abortController = new AbortController();
             try {
-                await createReservation(formData);
+                if (addReservation) {
+                    console.log(addReservation);
+                    await createReservation(formData, abortController.signal);
+                } else {
+                    await updateReservation(formData, abortController.signal);
+                }
                 history.push(`/dashboard?date=${formData.reservation_date}`);
             } catch (error) {
                 setFormError(error)
             };
+            return () => abortController.abort();
         };
     };
 
@@ -83,7 +92,7 @@ function ReservationForm({formData, setFormData, history}) {
                 type="text"
                 id="first_name"
                 onChange={handleChange}
-                value={formData.first_name}
+                value={formData.first_name || ""}
                 placeholder="First Name"
                 />
                 <br/>
@@ -96,7 +105,7 @@ function ReservationForm({formData, setFormData, history}) {
                 type="text"
                 id="last_name"
                 onChange={handleChange}
-                value={formData.last_name}
+                value={formData.last_name || ""}
                 placeholder="Last Name"
                 />
                 <br/>
@@ -109,11 +118,8 @@ function ReservationForm({formData, setFormData, history}) {
         type="tel"
         id="mobile_number"
         onChange={handleChange}
-        value={formData.mobile_number}
-        placeholder="xxx-xxx-xxxx"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        maxLength={10}
-        required
+        value={formData.mobile_number || ""}
+        placeholder="Mobile #"
         />
         <br/>
         <div className="row">
@@ -125,7 +131,7 @@ function ReservationForm({formData, setFormData, history}) {
                 type="date"
                 id="reservation_date"
                 onChange={handleChange}
-                value={formData.reservation_date}
+                value={formData.reservation_date || ""}
                 placeholder="YYYY-MM-DD"
                 pattern="\d{4}-\d{2}-\d{2}"
                 />
@@ -139,7 +145,7 @@ function ReservationForm({formData, setFormData, history}) {
                 type="time"
                 id="reservation_time"
                 onChange={handleChange}
-                value={formData.reservation_time}
+                value={formData.reservation_time || ""}
                 placeholder="HH:MM"
                 pattern="[0-9]{2}:[0-9]{2}"
                 />
@@ -152,7 +158,7 @@ function ReservationForm({formData, setFormData, history}) {
         type="number"
         id="people"
         onChange={handleChange}
-        value={formData.people}
+        value={formData.people || ""}
         placeholder="0"
         style={{width: 50}}
         />

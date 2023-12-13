@@ -4,7 +4,7 @@ import { formatMobileNumber } from "../utils/mobile-number";
 import { searchReservations } from "../utils/api";
 import DashboardReservation from "../dashboard/DashboardReservation";
 
-function Search() {
+function SearchReservations() {
     const [number, setNumber] = useState();
     const [error, setError] = useState(null);
     const [reservations, setReservations] = useState([]);
@@ -34,15 +34,17 @@ function Search() {
             const formatted = formatMobileNumber(number)
             setNumber(formatted);
             console.log(formatted)
+            const abortController = new AbortController();
             try {
-                const abortController = new AbortController();
                 const reservationsFromApi = await searchReservations(number, abortController.signal);
                 setReservations(reservationsFromApi);
             } catch (error) {
                 setError(error);
             };
-        }
-    }
+            return () => abortController.abort();
+        };
+    };
+    
     return (
         <>
         <form>
@@ -69,4 +71,4 @@ function Search() {
     )
 };
 
-export default Search;
+export default SearchReservations;

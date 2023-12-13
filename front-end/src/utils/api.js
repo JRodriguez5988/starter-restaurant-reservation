@@ -4,6 +4,7 @@
  */
 import formatReservationDate from "./format-reservation-date";
 import formatReservationTime from "./format-reservation-date";
+import { formatMobileNumberForForm } from "./mobile-number";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
@@ -114,7 +115,10 @@ export async function listTables(signal) {
 
 export async function readReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
-  return await fetchJson(url, { signal }, {});
+  return await fetchJson(url, { signal }, {})
+    .then(formatReservationDate)
+    .then(formatReservationTime)
+    .then(formatMobileNumberForForm);
 };
 
 export async function deleteAssignment(table, signal) {
@@ -129,4 +133,26 @@ export async function deleteAssignment(table, signal) {
 export async function searchReservations(number, signal) {
   const url = new URL(`${API_BASE_URL}/reservations?mobile_number=${number}`);
   return await fetchJson(url, {signal}, []);
+};
+
+export async function cancelReservation(reservation_id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { status: "cancelled" } }),
+    signal,
+  };
+  return await fetchJson(url, options, reservation_id);
+};
+
+export async function updateReservation(reservation, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation.reservation_id}`);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: reservation }),
+    signal,
+  };
+  return await fetchJson(url, options, reservation);
 };

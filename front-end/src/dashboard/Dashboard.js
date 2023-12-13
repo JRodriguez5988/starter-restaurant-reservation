@@ -32,7 +32,6 @@ function Dashboard() {
   function loadDashboard() {
     const abortController = new AbortController();
     setError(null);
-    setError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setError);

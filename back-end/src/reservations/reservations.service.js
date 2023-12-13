@@ -32,7 +32,7 @@ function read(reservation_id) {
         .first();
 };
 
-function update(updatedReservation) {
+async function update(updatedReservation) {
     return knex("reservations")
         .select("*")
         .where({reservation_id: updatedReservation.reservation_id})

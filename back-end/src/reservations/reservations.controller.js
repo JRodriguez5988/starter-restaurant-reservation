@@ -27,6 +27,7 @@ const VALID_STATUS = [
   "booked",
   "seated",
   "finished",
+  "cancelled",
 ];
 
 async function reservationExists(req, res, next) {
@@ -98,8 +99,9 @@ function notPastDate(req, res, next) {
 };
 
 function isValidTime(req, res, next) {
-  const time = req.body.data.reservation_time;
-  const isValid = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)
+  let time = req.body.data.reservation_time;
+  time = time.match(/\d\d:\d\d/)[0];
+  const isValid = /^([01]\d|2[0-3]):?([0-5]\d)$/.test(time)
   if (!isValid) {
     next({
       status: 400,
@@ -146,7 +148,6 @@ function notSeatedOrFinished(req, res, next) {
 
 function statusisValid(req, res, next) {
   const status = req.body.data.status;
-
   if(!VALID_STATUS.includes(status)) {
     next({
       status: 400,
@@ -201,17 +202,22 @@ function read(req, res) {
 };
 
 async function update(req, res) {
-  const reservation = res.locals.reservation;
-  const { data: { status } = {} } = req.body;
-  const updatedReservation = {
-    reservation_id: reservation.reservation_id,
-    first_name: reservation.first_name,
-    last_name: reservation.last_name,
-    mobile_number: reservation.mobile_number,
-    reservation_date: reservation.reservation_date,
-    reservation_time: reservation.reservation_time,
-    people: reservation.people,
-    status: status,
+  let updatedReservation = {};
+  if (req.body.data.reservation_id) {
+    updatedReservation = req.body.data;
+  } else {
+    const reservation = res.locals.reservation;
+    const { data: { status } = {} } = req.body;
+    updatedReservation = {
+      reservation_id: reservation.reservation_id,
+      first_name: reservation.first_name,
+      last_name: reservation.last_name,
+      mobile_number: reservation.mobile_number,
+      reservation_date: reservation.reservation_date,
+      reservation_time: reservation.reservation_time,
+      people: reservation.people,
+      status: status,
+    };
   };
   res.status(200).json({ data: await reservationsService.update(updatedReservation)})
 };
@@ -235,6 +241,19 @@ module.exports = {
     read,
   ],
   update: [
+    asyncErrorBoundary(reservationExists),
+    hasOnlyValidProperties, 
+    hasRequiredProperties,
+    isValidDate,
+    notTuesday,
+    notPastDate,
+    isValidTime,
+    duringOpenHours,
+    peopleIsNumber,
+    notSeatedOrFinished,
+    asyncErrorBoundary(update),    
+  ],
+  updateStatus: [
     asyncErrorBoundary(reservationExists),
     alreadyFinished,
     statusisValid,
