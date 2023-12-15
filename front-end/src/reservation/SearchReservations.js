@@ -64,7 +64,7 @@ function SearchReservations() {
         </form>
         <div>
             {reservations.length ? reservations.map((reservation, index) => 
-            <DashboardReservation key={index} reservation={reservation} />) : "No reservations found"}
+            <DashboardReservation key={reservation.reservation_id} reservation={reservation} />) : "No reservations found"}
         </div>
         </>
 

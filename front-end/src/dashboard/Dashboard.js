@@ -71,14 +71,14 @@ function Dashboard() {
           <ul className="list-group list-group-flush">
             {reservations.map((reservation, index) => 
             reservation.status === "finished" ? null :
-            <DashboardReservation key={index} reservation={reservation} />)}
+            <DashboardReservation key={reservation.reservation_id} reservation={reservation} />)}
           </ul>
         </div>
         <div className="col-5">
           <h4 className="card-header">Tables:</h4>
           <div>
             {tables.map((table, index) => 
-            <DashboardTable key={index} table={table} />)}
+            <DashboardTable key={table.table_id} table={table} />)}
           </div>
         </div>        
       </div>

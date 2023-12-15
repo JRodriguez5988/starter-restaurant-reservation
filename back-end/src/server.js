@@ -1,5 +1,4 @@
 const { PORT = 5001 } = process.env;
-// process.env.TZ = "US/Eastern";
 
 const app = require("./app");
 const knex = require("./db/connection");

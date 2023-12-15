@@ -88,9 +88,7 @@ function notPastDate(req, res, next) {
   month -= 1;
   let [hh, mm] = req.body.data.reservation_time.split(":");
   const requestDate = new Date(year, month, day, hh, mm);
-  console.log("requested date", requestDate)
   const today = new Date();
-  console.log("today", today)
   if (requestDate.getTime() < today.getTime()) {
     next({
       status: 400,
