@@ -62,7 +62,6 @@ function ReservationForm({formData, setFormData, history, addReservation = true}
             const abortController = new AbortController();
             try {
                 if (addReservation) {
-                    console.log(addReservation);
                     await createReservation(formData, abortController.signal);
                 } else {
                     await updateReservation(formData, abortController.signal);
