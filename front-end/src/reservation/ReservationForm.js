@@ -3,6 +3,7 @@ import "./ReservationForm.css";
 import { createReservation, updateReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { formatMobileNumber } from "../utils/mobile-number";
+import { formatAsTime } from "../utils/date-time";
 
 function ReservationForm({formData, setFormData, history, addReservation = true}) {
     const [formError, setFormError] = useState(null)
@@ -58,6 +59,7 @@ function ReservationForm({formData, setFormData, history, addReservation = true}
         event.preventDefault();
         if (isValid(formData)) {
             formData.mobile_number = formatMobileNumber(formData.mobile_number);
+            formData.reservation_time = formatAsTime(formData.reservation_time);
             setFormError(null);
             const abortController = new AbortController();
             try {

@@ -100,7 +100,6 @@ function notPastDate(req, res, next) {
 
 function isValidTime(req, res, next) {
   let time = req.body.data.reservation_time;
-  time = time.match(/\d\d:\d\d/)[0];
   const isValid = /^([01]\d|2[0-3]):?([0-5]\d)$/.test(time)
   if (!isValid) {
     next({
